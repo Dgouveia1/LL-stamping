@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento Inteligente de Estamparia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-gray-300">
+
+    <div id="loader" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex flex-col items-center justify-center">
+        <div class="loader-spinner"></div>
+        <p class="mt-4 text-white text-lg">Analisando estampa...</p>
+    </div>
+    
+    <div id="toast" class="hidden fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg fade-in">
+        Orçamento gerado com sucesso!
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-white">Orçamento Inteligente de Estamparia</h1>
+            <p class="text-md text-gray-400 mt-2">Envie sua arte, responda algumas perguntas e deixe nossa IA fazer o resto.</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <div class="bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-700">
+                <h2 class="text-xl font-semibold mb-4 text-white">1. Envie sua Estampa</h2>
+                <p class="text-sm text-gray-400 mb-4">Formatos aceitos: JPG, PNG, PDF, AI, PSD.</p>
+                
+                <label for="file-upload" class="w-full cursor-pointer bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg inline-flex items-center justify-center hover:bg-indigo-700 transition-all duration-300 shadow-md hover:shadow-indigo-500/50">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    <span>Anexar Arquivo</span>
+                </label>
+                <input id="file-upload" type="file" accept="image/*,application/pdf,.ai,.psd">
+
+                <div id="preview-container" class="mt-6 hidden">
+                    <h3 class="font-semibold text-gray-300">Pré-visualização:</h3>
+                    <div class="mt-2 border-2 border-dashed border-slate-600 rounded-lg p-4 text-center bg-slate-900/50">
+                        <img id="image-preview" src="#" alt="Pré-visualização da estampa" class="max-h-60 mx-auto rounded-md">
+                        <p id="file-name" class="text-sm text-gray-500 mt-2"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-700">
+                <h2 class="text-xl font-semibold mb-4 text-white">2. Detalhes do Projeto</h2>
+                <form id="project-form">
+                    <div class="space-y-4">
+                        <div>
+                            <label for="mesh-type" class="block text-sm font-medium text-gray-400">Tipo de malha</label>
+                            <select id="mesh-type" name="mesh-type" class="mt-1 block w-full p-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+                                <option>Algodão 30.1 Penteado</option>
+                                <option>Malha PV (Poliéster/Viscose)</option>
+                                <option>Poliéster</option>
+                                <option>Viscolycra</option>
+                                <option>Não sei, preciso de sugestão</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="roll-size" class="block text-sm font-medium text-gray-400">Tamanho do rolo/peça (em metros)</label>
+                            <input type="number" name="roll-size" id="roll-size" value="100" class="mt-1 block w-full p-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+                        </div>
+                        <div>
+                            <label for="application-type" class="block text-sm font-medium text-gray-400">Tipo de aplicação</label>
+                            <select id="application-type" name="application-type" class="mt-1 block w-full p-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+                                <option>Sublimação</option>
+                                <option>Silk Screen</option>
+                                <option>Transfer</option>
+                                <option>DTF (Direct to Film)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="quantity" class="block text-sm font-medium text-gray-400">Quantidade estimada de peças</label>
+                            <input type="number" name="quantity" id="quantity" value="50" class="mt-1 block w-full p-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-white">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <section id="results-section" class="mt-8 bg-slate-800 p-6 rounded-lg shadow-lg border border-slate-700 hidden">
+            <h2 class="text-2xl font-bold text-center mb-6 text-white">Análise da IA & Orçamento Simulado</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
+                <div class="bg-slate-700/50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-400">Tipo de Arte Detectado</h4>
+                    <p id="result-art-type" class="text-xl font-bold text-indigo-400"></p>
+                </div>
+                <div class="bg-slate-700/50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-400">Fio Necessário</h4>
+                    <p id="result-yarn-needed" class="text-xl font-bold text-white"></p>
+                </div>
+                <div class="bg-slate-700/50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-400">Tipo de Fio Compatível</h4>
+                    <p id="result-yarn-type" class="text-xl font-bold text-white"></p>
+                </div>
+                <div class="bg-slate-700/50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-400">Estampa Recomendada</h4>
+                    <p id="result-print-recommendation" class="text-xl font-bold text-white"></p>
+                </div>
+                <div class="bg-slate-700/50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-400">Custo por Peça</h4>
+                    <p id="result-cost-per-piece" class="text-2xl font-extrabold text-green-400"></p>
+                </div>
+                <div class="bg-slate-700/50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-400">Tempo de Produção</h4>
+                    <p id="result-production-time" class="text-xl font-bold text-white"></p>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-700">
+                <h3 class="text-lg font-semibold text-white">Sistema de Confiança e Transparência</h3>
+                <div class="mt-4 space-y-3 text-sm text-gray-400">
+                    <p><strong>Justificativa Técnica:</strong> <span id="result-justification"></span></p>
+                    <p><strong>Comparação de Mercado:</strong> <span id="result-market-comparison"></span></p>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button id="generate-quote" class="bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition-all duration-300 text-lg shadow-md hover:shadow-green-500/50">
+                    Gerar Orçamento e Enviar por WhatsApp
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
